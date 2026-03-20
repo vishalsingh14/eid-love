@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eid Special Surprise</title>
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --gold: #d4af37;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff0f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #game-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        h1 { color: var(--primary-pink); font-size: 1.5rem; margin-bottom: 20px; }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            position: relative;
+            height: 50px;
+        }
+
+        button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #yes-btn { background: var(--primary-pink); color: white; font-size: 1.2rem; }
+        #no-btn { background: #ccc; color: #555; position: absolute; }
+
+        .hidden { display: none !important; }
+
+        /* Heart Animation */
+        .heart {
+            position: fixed;
+            color: #ff4d6d;
+            font-size: 20px;
+            user-select: none;
+            z-index: 1;
+            animation: moveUp 3s linear forwards;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        #final-message {
+            font-size: 1.8rem;
+            color: var(--primary-pink);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="quiz-section">
+            <h1 id="questionText">Ready for your Eid Surprise?</h1>
+            <div class="btn-group">
+                <button id="yes-btn" onclick="nextQuestion()">YES! ❤️</button>
+                <button id="no-btn" onmouseover="moveNoButton()">No</button>
+            </div>
+        </div>
+
+        <div id="final-section" class="hidden">
+            <div id="final-message">
+                🌙 Eid Mubarak, My Love!<br>
+                <small style="font-size: 1rem; color: #555;">You are the moon to my night and the joy to my heart. I love you forever! ❤️</small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            "Do you know you're the most beautiful person I know?",
+            "Are you ready to spend this Eid with me?",
+            "Do you love it when I call you mine?",
+            "Is my heart the safest place for you?",
+            "Will you hold my hand through every Eid to come?",
+            "Am I lucky to have you? (Wait, I know the answer is YES!)",
+            "Do you like my flirting?",
+            "Can I give you a thousand hugs this Eid?",
+            "Are you my favorite person in the entire universe?",
+            "One last question... Do you love me more than anyone else?"
+        ];
+
+        let currentStep = 0;
+        const qText = document.getElementById('questionText');
+        const noBtn = document.getElementById('no-btn');
+        const quizSection = document.getElementById('quiz-section');
+        const finalSection = document.getElementById('final-section');
+
+        function moveNoButton() {
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        function nextQuestion() {
+            if (currentStep < questions.length) {
+                qText.innerText = questions[currentStep];
+                currentStep++;
+                
+                // Add a small pulse effect to the container
+                document.getElementById('game-container').style.transform = "scale(1.05)";
+                setTimeout(() => {
+                    document.getElementById('game-container').style.transform = "scale(1)";
+                }, 200);
+
+            } else {
+                showFinal();
+            }
+        }
+
+        function showFinal() {
+            quizSection.classList.add('hidden');
+            finalSection.classList.remove('hidden');
+            document.body.style.background = "#ffe3e8";
+            
+            // Start heart shower
+            setInterval(createHeart, 200);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
