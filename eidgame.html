@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise for You</title>
+    <style>
+        :root {
+            --gold: #ffd700;
+            --rose: #ff4d6d;
+            --night: #0a0908;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--night);
+            color: white;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        .section {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Floating Emojis */
+        .floating-emoji {
+            position: fixed;
+            font-size: 2rem;
+            z-index: -1;
+            animation: float 10s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(45deg, var(--gold), #facc15);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn:hover { transform: scale(1.1); }
+
+        /* Game Styles */
+        #gameCanvas {
+            background: #222;
+            border: 4px solid var(--gold);
+            max-width: 100%;
+            touch-action: none;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .control-btn {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        /* Proposal */
+        .heart { font-size: 100px; animation: beat 1s infinite; }
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sec1" class="section active">
+        <h1>🌙 Eid Mubarak, My Love! ✨</h1>
+        <p style="font-size: 1.5rem;">May this Eid bring as much joy to your heart as you bring to mine. 🤗</p>
+        <div style="font-size: 5rem;">🥘 🍬 🕌</div>
+        <button class="btn" onclick="nextSec(2)">Tap to Start our Journey</button>
+    </div>
+
+    <div id="sec2" class="section">
+        <h2>How well do you know me? 🤔</h2>
+        <p>What is my absolute favorite thing in the world?</p>
+        <button class="btn" onclick="alert('Close! But try again ❤️')">Pizza 🍕</button>
+        <button class="btn" onclick="nextSec(3)">Your Smile 😊</button>
+        <button class="btn" onclick="alert('I do like games, but not the most! 🎮')">Video Games 🎮</button>
+    </div>
+
+    <div id="sec3" class="section">
+        <h2>Race to my Heart! 🏎️💨</h2>
+        <p>Avoid the obstacles to reach the finish line!</p>
+        <canvas id="gameCanvas" width="300" height="400"></canvas>
+        <div class="controls">
+            <div class="control-btn" ontouchstart="move(-1)" onmousedown="move(-1)">⬅️</div>
+            <div class="control-btn" ontouchstart="move(1)" onmousedown="move(1)">➡️</div>
+        </div>
+    </div>
+
+    <div id="sec4" class="section">
+        <div class="heart">💖</div>
+        <h1>You won the race, and my heart!</h1>
+        <p style="font-size: 1.3rem; max-width: 600px;">
+            From the moon of Eid to the stars in your eyes, I want to spend every celebration with you.
+        </p>
+        <h2 style="color: var(--rose);">Will you marry me? 💍</h2>
+        <div>
+            <button class="btn" style="background: var(--rose); color: white;" onclick="celebrate()">YES! 👰‍♀️</button>
+            <button class="btn" onmouseover="moveButton(this)">No 🏃‍♂️</button>
+        </div>
+    </div>
+
+    <script>
+        function nextSec(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec' + id).classList.add('active');
+            if(id === 3) initGame();
+        }
+
+        // Game Logic
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let car
