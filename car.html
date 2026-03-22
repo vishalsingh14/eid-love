@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishk Games - Cartoon Sprint 200m</title>
+    <style>
+        /* --- RESET AND MAIN LAYOUT --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Comic Sans MS', cursive, sans-serif; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; color: white; overflow: hidden; }
+
+        /* --- CARTOON STYLE HELPERS --- */
+        .cartoony-box { background: #34495e; border: 4px solid #1a252f; border-radius: 15px; box-shadow: 8px 8px 0px rgba(0,0,0,0.2); }
+        .cartoony-btn { font-size: 20px; font-weight: bold; background: #e74c3c; border: 4px solid #c0392b; border-radius: 10px; padding: 10px 20px; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; box-shadow: 0 4px 0 #922b21; text-transform: uppercase; }
+        .cartoony-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #922b21; }
+
+        /* --- BRANDING --- */
+        #branding { position: fixed; top: 10px; left: 10px; font-size: 14px; color: gold; z-index: 1000; }
+
+        /* --- SCREENS --- */
+        .screen { display: none; text-align: center; }
+        .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 100%; width: 100%; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes drift { 0% { transform: translate(-2px, 2px); } 50% { transform: translate(2px, -2px); } 100% { transform: translate(-2px, 2px); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes roadScroll { from { background-position: 0 0; } to { background-position: 0 -400px; } }
+
+        /* --- SCREEN 1: START MENU --- */
+        #menu-content { animation: pulse 2s infinite ease-in-out; }
+
+        /* --- SCREEN 2: CAR SELECTION --- */
+        .car-option { display: inline-block; width: 100px; height: 150px; background-size: cover; background-repeat: no-repeat; cursor: pointer; border: 4px solid transparent; border-radius: 10px; transition: border 0.3s; margin: 10px; animation: drift 4s infinite alternate; }
+        .car-option:hover { border: 4px solid gold; animation-play-state: paused; }
+        #car1-opt { background-color: #e74c3c; box-shadow: 8px 8px 0 rgba(0,0,0,0.1); } /* Cartoon Red Car Body */
+        #car2-opt { background-color: #3498db; box-shadow: 8px 8px 0 rgba(0,0,0,0.1); } /* Cartoon Blue Car Body */
+
+        /* --- SCREEN 3: RACE TRACK --- */
+        #race-track { display: none; position: relative; width: 400px; height: 600px; border-left: 10px solid #7f8c8d; border-right: 10px solid #7f8c8d; }
+        #race-track.active { display: block; animation: roadScroll 1s linear infinite; }
+        .race-lane { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; height: 100%; border-right: 5px solid white; }
+        .race-lane.no-border { border-right: none; }
+        .cartoon-car { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 60px; height: 100px; border-radius: 10px; border: 4px solid #1a252f; box-shadow: 0 5px 0 rgba(0,0,0,0.3); animation: drift 3s infinite; }
+        .p1-car { background-color: #e74c3c; z-index: 100; }
+        .p2-car { background-color: #2ecc71; z-index: 90; bottom: 50px; }
+        
+        #controls { position: absolute; bottom: 20px; left: 20px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+        #finish-line { display: none; position: absolute; top: 100px; left: 0; width: 100%; height: 20px; background: white; text-align: center; color: black; line-height: 20px; font-weight: bold; animation: pulse 0.5s infinite; }
+
+        /* --- SCREEN 4: WIN --- */
+        #win-box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 30px; }
+        #winner-text { font-size: 32px; color: gold; text-shadow: 2px 2px 0px #c0392b; animation: drift 2s infinite alternate; }
+
+        /* Layout Grid */
+        #race-layout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; position: relative; }
+    </style>
+</head>
+<body>
+
+<div id="branding">Vishk Games</div>
+
+<div class="cartoony-box" style="width: 400px; height: 600px; position: relative; padding: 20px;">
+
+    <div style="position: relative; width: 100%; height: 100%;">
+
+        <div id="screen-menu" class="screen active">
+            <div id="menu-content">
+                <h1 style="font-size: 40px; text-transform: uppercase;">CARTOON<br>SPRINT 200m</h1>
+                <p>Race to the Finish!</p>
+            </div>
+            <button class="cartoony-btn" onclick="goToSelect()">PLAY</button>
+            <button class="cartoony-btn" style="background: #95a5a6; border-color: #7f8c8d; box-shadow: 0 4px 0 #5f6a6b;">EXIT</button>
+        </div>
+
+        <div id="screen-select" class="screen">
+            <h2 style="font-size: 28px; color: gold;">CHOOSE YOUR CAR</h2>
+            <div>
+                <div id="car1-opt" class="car-option" onclick="selectCar('red')"></div>
+                <div id="car2-opt" class="car-option" onclick="selectCar('blue')"></div>
+            </div>
+            <p>Select Red or Blue</p>
+        </div>
+
+        <div id="race-track" class="cartoony-box">
+            <div id="finish-line">200m FINISH!</div>
+            <div id="race-layout">
+                <div class="race-lane">
+                    <div id="player1-car" class="cartoon-car p1-car"></div>
+                </div>
+                <div class="race-lane no-border">
+                    <div id="player2-car" class="cartoon-car p2-car"></div>
+                </div>
+            </div>
+            
+            <div id="controls">
+                <button class="cartoony-btn" style="padding: 15px;" onclick="movePlayer(-20)">▲</button>
+                <button class="cartoony-btn" style="padding: 15px; background: #95a5a6; border-color: #7f8c8d; box-shadow: 0 4px 0 #5f6a6b;" onclick="movePlayer(10)">▼</button>
+            </div>
+        </div>
+
+        <div id="screen-win" class="screen">
+            <div id="win-box" class="cartoony-box">
+                <h2>1st POSITION:</h2>
+                <div id="winner-text"></div>
+                <button class="cartoony-btn" onclick="location.reload()">RESTART</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const screens = { menu: 'screen-menu', select: 'screen-select', track: 'race-track', win: 'screen-win' };
+    const p1Car = document.getElementById('player1-car');
+    const p2Car = document.getElementById('player2-car');
+    const track = document.getElementById('race-track');
+    const finish = document.getElementById('finish-line');
+    const winnerText = document.getElementById('winner-text');
+
+    let p1Position = 50; // Initial 'bottom' position in pixels
+    let p2Position = 50;
+    let cpuInterval;
+    let raceActive = false;
+
+    // --- NAVIGATION ---
+    function setActiveScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        if (id !== screens.track) {
+            track.classList.remove('active');
+        } else {
+            track.classList.add('active');
+        }
+        document.getElementById(id).classList.add('active');
+    }
+
+    function goToSelect() { setActiveScreen(screens.select); }
+
+    function selectCar(color) {
+        if (color === 'red') {
+            p1Car.style.backgroundColor = "#e74c3c"; // Red
+        } else {
+            p1Car.style.backgroundColor = "#3498db"; // Blue
+        }
+        startRace();
+    }
+
+    // --- RACING LOGIC ---
+    function startRace() {
+        setActiveScreen(screens.track);
+        raceActive = true;
+        
+        p1Position = 50;
+        p2Position = 50;
+        p1Car.style.bottom = `${p1Position}px`;
+        p2Car.style.bottom = `${p2Position}px`;
+        finish.style.display = 'none';
+
+        // CPU Logic: Green car moves forward automatically
+        cpuInterval = setInterval(() => {
+            if (!raceActive) return;
+            p2Position += 3; // CPU speed
+            p2Car.style.bottom = `${p2Position}px`;
+            checkWinCondition();
+        }, 100); // 10 ticks per second
+    }
+
+    // Proper Up/Down movement (Accelerate/Brake)
+    function movePlayer(amount) {
+        if (!raceActive) return;
+        // Adjust the bottom property. Smaller bottom moves the car up (accelerate).
+        p1Position -= amount; 
+        p1Position = Math.max(50, Math.min(550, p1Position)); // Boundary checks
+        p1Car.style.bottom = `${p1Position}px`;
+        checkWinCondition();
+    }
+
+    function checkWinCondition() {
+        // Simple 200m relative distance. Target is when top of car hits top of track.
+        const targetPos = 550; // Approaching the 200m finish line zone
+
+        if (p1Position >= targetPos) {
+            endRace("PLAYER 1");
+        } else if (p2Position >= targetPos) {
+            endRace("OPPONENT");
+        }
+    }
+
+    function endRace(winner) {
+        raceActive = false;
+        clearInterval(cpuInterval);
+        finish.style.display = 'block';
+        winnerText.innerText = winner;
+
+        // Give the final winner animation time before the podium
+        setTimeout(() => {
+            setActiveScreen(screens.win);
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
